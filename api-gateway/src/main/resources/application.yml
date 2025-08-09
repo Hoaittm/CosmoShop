@@ -1,0 +1,66 @@
+server:
+  port: 8900
+
+spring:
+  application:
+    name: api-gateway
+
+  session:
+    store-type: redis
+    redis:
+      namespace: session
+      flush-mode: on-save
+
+  redis:
+    host: localhost
+    port: 6379
+
+  main:
+    web-application-type: reactive
+# eureka:
+#   client:
+#     server-url:
+#       defaultZone : http://localhost:8761/eureka
+  cloud:
+    gateway:
+      routes:
+        - id: userservice
+          uri: http://localhost:8811
+          predicates:
+            - Path=/api/accounts/**
+         
+        - id: catalogservice
+          uri: http://localhost:8810
+          predicates:
+            - Path=/api/catalog/**
+        - id: orderservice
+          uri: http://localhost:8813
+          predicates:
+            - Path=/api/shop/**
+        - id: recommendationservice
+          uri: http://localhost:8812
+          predicates:
+            - Path=/api/review/**
+        - id: deepseek
+          uri: http://localhost:8814
+          predicates:
+            - Path=/api/deepseek/**
+        - id: discount
+          uri: http://localhost:8815
+          predicates:
+            - Path=/api/discount/**
+        - id: contactservice
+          uri: http://localhost:8816
+          predicates:
+            - Path=/api/contact/**
+      discovery:
+        locator:
+          enabled: false
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: TRACE
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+    org.springframework.web.server.adapter.HttpWebHandlerAdapter: TRACE
+    reactor.netty: DEBUG
